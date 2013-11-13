@@ -7,7 +7,7 @@ window.onload = function(){
     };
     
     document.getElementById('clear-completed').onclick = function(){
-        TODO_APP.delChecked;      
+        delChecked();    
     };
 };
 
@@ -42,6 +42,21 @@ function addTodo(text){
     document.getElementById('todos').appendChild(li);
     render();
 
+}
+
+function delChecked(){
+    TODO_APP.delChecked();
+    var todos = document.getElementById('todos');
+    //RECORRER HIJOS
+    var i = todos.children.length -1;
+    for(i;i>=0;i--){
+        var li = todos.children[i];
+        var check = li.children[0];
+        if(check.checked){
+            todos.removeChild(li);
+        }
+    }
+    render();
 }
 
 function render(){
