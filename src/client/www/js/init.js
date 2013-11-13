@@ -9,6 +9,11 @@ window.onload = function(){
     document.getElementById('clear-completed').onclick = function(){
         delChecked();    
     };
+    
+     document.getElementById('check-all').onclick = function() {
+         var state = TODO_APP.itemsLeft() > 0;
+         checkAll(state);
+     };
 };
 
 function addTodo(text){
@@ -58,6 +63,18 @@ function delChecked(){
     }
     render();
 }
+
+function checkAll(state) {
+     TODO_APP.checkAll(state);
+     var todos = document.getElementById('todos');
+     var i = todos.children.length - 1;
+     for (; i >= 0; i--) {
+         var li = todos.children[i];
+         var check = li.children[0];
+         check.checked = state;
+     }
+     render();
+ }
 
 function render(){
     var itemsLeft = document.getElementById('items-left');
