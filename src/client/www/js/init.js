@@ -2,7 +2,9 @@ window.onload = function(){
     document.getElementById('new-todo').onkeypress = function(event){
         //console.log(event.keyCode);
         if(event.keyCode===13){
+            //addTodo(this.value);
             addTodo(event.target.value);
+            event.target.value="";
         }
     };
     
