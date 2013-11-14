@@ -28,53 +28,104 @@ window.onload = function(){
      };
 };
 
-function addTodo(text){
+function addTodo(text) {
     var todo = TODO_APP.addTodo(text);
-    
-    var li = document.createElement('li');
+
+    var li = document.createElement("li");
     li.id = 'todo_' + todo.getId();
-       
-        var check = document.createElement("input");
-        check.type = 'checkbox';
-        check.onclick = function(){
-            todo.setChecked(!todo.getChecked());            
-            render();
-        };
-        
-        var text = document.createElement('input');
-        text.type = 'text';
-        text.value = todo.getText();
-        
-        var button = document.createElement('button');
-            button.onclick=function(){
-            TODO_APP.delTodo(todo.getId);
-            document.getElementById('todos').removeChild(li);
-            render();
-        };
-        
-    
-    li.appendChild(check);    
+
+    var check = document.createElement("input");
+    check.type = 'checkbox';
+    check.onclick = function() {
+        todo.setChecked(!todo.getChecked());
+        render();
+    };
+    li.appendChild(check);
+
+    var text = document.createElement("input");
+    text.type = 'text';
+    text.value = todo.getText();
+    text.mode = 'view';
+    text.style.display = 'none';
+    text.onkeyup = function(event) {
+        //console.log(event.keyCode);
+        if(event.keyCode===13){//Enter
+            modTodo(todo,text,span);
+        }else if(event.keyCode===27){//Esc
+            cancelEdition(text,span);
+        }
+    };
+    //addEventListener añade mas de una funcion al mismo evento
+    text.addEventListener('blur',function(){
+       if(text.mode === 'edit'){
+           text.mode='view';
+           modTodo(todo,text,span);
+       } 
+       button.style.display = 'inline';
+       check.style.display='inline';
+    });
     li.appendChild(text);
+    
+    var span = document.createElement("span");    
+    span.innerHTML = todo.getText();
+    span.ondblclick = function(event) {
+        text.mode = 'edit';
+        text.value = todo.getText();
+        text.setSelectionRange(0,text.value.length);//seleccionar el texto
+        
+        text.style.display='inline';
+        span.style.display='none';
+        
+        button.style.display='none';
+        check.style.display='none';                
+    };
+    li.appendChild(span);
+
+    var button = document.createElement("input");
+    button.type = 'button';
+    button.onclick = function() {
+        TODO_APP.delTodo(todo.getId());
+        document.getElementById('todos').removeChild(li);
+        render();
+    };
+
     li.appendChild(button);
+
     document.getElementById('todos').appendChild(li);
     render();
-
 }
 
-function delChecked(){
+function modTodo(todo,editor,viewer){
+    var text = editor.value;
+    TODO_APP.modTodo(todo.getId(), text);
+    
+    viewer.innerHTML = text;
+    
+    editor.style.display = 'none';
+    viewer.style.display = 'inline';
+    editor.mode = 'view'; 
+}
+
+function cancelEdition(editor,viewer){
+    editor.style.display = 'none';
+    viewer.style.display='inline';
+    
+    editor.mode='view';
+}
+function delChecked() {
     TODO_APP.delChecked();
     var todos = document.getElementById('todos');
-    //RECORRER HIJOS
-    var i = todos.children.length -1;
-    for(i;i>=0;i--){
+    var i = todos.children.length - 1;
+    for (; i >= 0; i--) {
         var li = todos.children[i];
         var check = li.children[0];
-        if(check.checked){
+        if (check.checked) {
             todos.removeChild(li);
         }
     }
     render();
 }
+
 
 function checkAll(state) {
      TODO_APP.checkAll(state);
